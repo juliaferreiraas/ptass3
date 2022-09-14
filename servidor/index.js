@@ -30,17 +30,31 @@ app.use(
 
 app.get('/autenticar', async function(req, res){
   res.render('autenticar');
-})
+});
+
+app.get('/listar', async function(req, res){
+  const usuarios = await usuario.findAll();
+    res.render("listar")
+    });
+
+app.get('/cadastro', async function(req, res){
+  res.render("autenticar")
+  });
+
+  app.post('/cadastro', async function(req, res){
+    const usuario = await usuario.create(req.body)
+    res.json(usuario)
+    });
 
 app.get('/', async function(req, res){
   res.render("home")
-})
+});
 
 app.post('/logar', (req, res) => {
   if(req.body.user === 'julia' && req.body.password === '0000'){
     const id = 1;
     const token = jwt.sign({ id }, process.env.SECRET, {
-      expiresIn: 3600 // expires in 1h
+      expiresIn: 3600 // expira in 1h
     });
 
     res.cookie('token', token, { httpOnly: true });
