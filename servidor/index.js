@@ -34,24 +34,25 @@ app.get('/autenticar', async function(req, res){
 
 app.get('/listar', async function(req, res){
   const usuarios = await usuario.findAll();
-    res.render("listar")
+    res.render("listar", { usuarios })
     });
 
 app.get('/cadastro', async function(req, res){
-  res.render("autenticar")
+  res.render("cadastro")
   });
 
   app.post('/cadastro', async function(req, res){
-    const usuario = await usuario.create(req.body)
-    res.json(usuario)
+    const usuario_ = await usuario.create(req.body)
+    res.json(usuario_)
     });
 
 app.get('/', async function(req, res){
   res.render("home")
 });
 
-app.post('/logar', (req, res) => {
-  if(req.body.user === 'julia' && req.body.password === '0000'){
+app.post('/logar', async (req, res) => {
+  const banco = await usuario.findOne({where: {usuario:req.body.user}})
+  if(req.body.user === banco.usuario && req.body.password === banco.senha){
     const id = 1;
     const token = jwt.sign({ id }, process.env.SECRET, {
       expiresIn: 3600 // expira in 1h
